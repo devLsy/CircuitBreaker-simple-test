@@ -10,13 +10,10 @@ management:
     health:
       show-details: always
 
-server:
-  port: 8080
-
 resilience4j:
   circuitbreaker:
     instances:
-      userService:
+      catalogService:
         registerHealthIndicator: true
         eventConsumerBufferSize: 10
         failureRateThreshold: 50
@@ -32,5 +29,12 @@ resilience4j:
       userService:
         maxRetryAttempts: 5
         waitDuration: 10s
+
+
+
+
+
+
+
 
 

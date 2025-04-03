@@ -2,7 +2,6 @@ package com.test.lsy.userservice.controller;
 
 import com.test.lsy.userservice.model.OrderDto;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,13 +23,11 @@ import java.util.stream.Stream;
 public class UserController {
 
     private final RestTemplate restTemplate;
-    public static final String USER_SERVICE="userService";
     private static final String BASE_URL = "http://localhost:8081/catalog";
     private int attemp = 1;
 
     @GetMapping("/displayOrders")
-    @CircuitBreaker(name = "catalogService", fallbackMethod = "getAllAvailableProducts")
-    @Retry(name = USER_SERVICE,fallbackMethod = "getAllAvailableProducts")
+    @CircuitBreaker(name = "userService", fallbackMethod = "getAllAvailableProducts")
     public List<OrderDto> getOrders(@RequestParam(name = "category",required = false) String category) throws Exception{
 
         String url = category == null ? BASE_URL : BASE_URL + "?category=" + category;
