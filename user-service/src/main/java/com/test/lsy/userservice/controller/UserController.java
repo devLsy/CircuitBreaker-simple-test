@@ -1,6 +1,8 @@
 package com.test.lsy.userservice.controller;
 
 import com.test.lsy.userservice.model.OrderDto;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +29,8 @@ public class UserController {
     private int attemp = 1;
 
     @GetMapping("/displayOrders")
-//    @CircuitBreaker(name = "catalogService", fallbackMethod = "getAllAvailableProducts")
-//    @Retry(name = USER_SERVICE,fallbackMethod = "getAllAvailableProducts")
+    @CircuitBreaker(name = "catalogService", fallbackMethod = "getAllAvailableProducts")
+    @Retry(name = USER_SERVICE,fallbackMethod = "getAllAvailableProducts")
     public List<OrderDto> getOrders(@RequestParam(name = "category",required = false) String category) throws Exception{
 
         String url = category == null ? BASE_URL : BASE_URL + "?category=" + category;
@@ -38,6 +40,7 @@ public class UserController {
     }
     // fallback method
     public List<OrderDto> getAllAvailableProducts(Exception e){
+        log.info("CircuitBreaker!!!!!!!!!!!!!!!!!!!!!!!!");
         return Stream.of(
                 new OrderDto(120, "TEMP_TV", "electronics", "white", 450000),
                 new OrderDto(119, "LED TV", "electronics", "white", 45000),
